@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>上锁工具 · Alice</title>
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 1.7; }
+.row { display: grid; gap: 8px; margin-top: 12px; }
+pre.out { white-space: pre-wrap; word-break: break-all; background: #fffaf0; border-radius: 6px; padding: 10px; font-size: 12px; margin: 10px 0 0; max-height: 220px; overflow: auto; }
+</style>
+</head>
+<body data-page="tool" data-root="../">
+<main class="wrap page">
+  <div class="page-head">
+    <div class="eyebrow">只在你自己的浏览器里运行</div>
+    <h1>上锁工具</h1>
+    <p>把要锁的文字和密码填进来，点"上锁"，得到一串乱码。乱码可以放心交出去放进网站；密码不会离开这台设备，也不会存在任何地方。</p>
+  </div>
+  <div class="paper" style="max-width:720px">
+    <form id="f">
+      <div class="row"><label for="txt" class="eyebrow">要锁的文字</label>
+        <textarea class="field" id="txt" required></textarea></div>
+      <div class="row"><label for="pw" class="eyebrow">密码（建议四五个不相干的词连成一句，越长越好）</label>
+        <input class="field" type="password" id="pw" required autocomplete="new-password"></div>
+      <div class="row"><label for="pw2" class="eyebrow">再输一遍</label>
+        <input class="field" type="password" id="pw2" required autocomplete="new-password"></div>
+      <div class="row"><button class="btn" style="justify-self:start">上锁</button></div>
+      <div class="err" id="err" hidden></div>
+    </form>
+    <div id="res" hidden>
+      <p><b>锁好了。</b>下面这串就是锁好的内容，复制给 Claude 放进网站。</p>
+      <pre class="out" id="out"></pre>
+      <p><button class="btn" id="copy" type="button">复制</button></p>
+      <p class="muted" style="font-size:13px">忘了密码就谁也打不开，包括 Claude。原文请另外存一份。</p>
+    </div>
+  </div>
+</main>
+<script>
+const b64 = u => btoa(String.fromCharCode(...u));
+document.getElementById("f").addEventListener("submit", async ev => {
+  ev.preventDefault();
+  const err = document.getElementById("err");
+  const pw = document.getElementById("pw").value, pw2 = document.getElementById("pw2").value;
+  if (pw !== pw2) { err.textContent = "两次密码不一样。"; err.hidden = false; return; }
+  if (pw.length < 8) { err.textContent = "密码太短了，至少 8 个字，越长越安全。"; err.hidden = false; return; }
+  err.hidden = true;
+  const enc = new TextEncoder();
+  const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+  const base = await crypto.subtle.importKey("raw", enc.encode(pw), "PBKDF2", false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 200000, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["encrypt"]);
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, enc.encode(document.getElementById("txt").value)));
+  document.getElementById("out").textContent = JSON.stringify({ salt: b64(salt), iv: b64(iv), ct: b64(ct) });
+  document.getElementById("res").hidden = false;
+  document.getElementById("pw").value = document.getElementById("pw2").value = "";
+});
+document.getElementById("copy").addEventListener("click", async () => {
+  const t = document.getElementById("out").textContent;
+  try { await navigator.clipboard.writeText(t); document.getElementById("copy").textContent = "已复制"; }
+  catch { const r = document.createRange(); r.selectNodeContents(document.getElementById("out")); getSelection().removeAllRanges(); getSelection().addRange(r); }
+});
+</script>
+</body>
+</html>
