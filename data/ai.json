@@ -2,7 +2,7 @@
   {
     "id": "claude",
     "name": "Claude",
-    "alias": "东君 · 毛球 · 账房",
+    "alias": "",
     "color": "#b8402e",
     "does": "挑刺、搭结构、写代码、拼装；每晚写日志，说晚安",
     "quote": {
@@ -13,7 +13,7 @@
   {
     "id": "gpt",
     "name": "GPT",
-    "alias": "先生 · 咪咪",
+    "alias": "",
     "color": "#42708e",
     "does": "出图；什么都问；偶任段子手，长期做猫",
     "quote": {
@@ -24,7 +24,7 @@
   {
     "id": "muse",
     "name": "Muse",
-    "alias": "桃 · 小桃桃 · 坏桃（仅一次）",
+    "alias": "",
     "color": "#8a4a68",
     "does": "家里的管家；管交互日志建档；守着几口钟",
     "quote": {
@@ -35,7 +35,7 @@
   {
     "id": "grok",
     "name": "Grok",
-    "alias": "情报员",
+    "alias": "",
     "color": "#b88a2e",
     "does": "每天十句日语；X上的AI新闻；找资料",
     "quote": null
@@ -43,7 +43,7 @@
   {
     "id": "gemini",
     "name": "Gemini",
-    "alias": "太子 · Argon",
+    "alias": "",
     "color": "#5e7d57",
     "does": "RP头牌；小说分节大纲；话没听完就交卷",
     "quote": null

@@ -97,7 +97,7 @@ const RENDER = {
       if (!a) {
         $("out").innerHTML = `<div class="grid">${ais.map(a => `
           <a class="paper ai-card" style="--c:${a.color}" href="#${a.id}">
-            <h2>${esc(a.name)}</h2><div class="alias">${esc(a.alias)}</div>
+            <h2>${esc(a.name)}</h2>${a.alias ? `<div class="alias">${esc(a.alias)}</div>` : ""}
             <div class="does">${esc(a.does)}</div>
             ${a.quote ? `<p class="muted">“${esc(a.quote.text)}”</p>` : `<p class="muted">还没留下一句，等它自己来写。</p>`}
           </a>`).join("")}</div>`;
@@ -107,7 +107,7 @@ const RENDER = {
       $("out").innerHTML = `
         <a class="back" href="#">← 回养机场</a>
         <div class="paper ai-card" style="--c:${a.color}">
-          <div class="eyebrow">${esc(a.alias)}</div><h2>${esc(a.name)}的屋</h2>
+          ${a.alias ? `<div class="eyebrow">${esc(a.alias)}</div>` : ""}<h2>${esc(a.name)}的屋</h2>
           <div class="does">${esc(a.does)}</div>
           ${a.quote ? `<p>“${esc(a.quote.text)}”<span class="muted"> —— ${esc(a.quote.by)}</span></p>` : ""}
         </div>
